@@ -7,8 +7,10 @@ fileName="$2"
 className="$3"
 template="template.java"
 
+# if fileName has '.java' in it, remove it for consistancy
+# will only remove a single '.java' from the end, not the middle
 if [[ "$fileName" =~ ".java" ]]; then
-    fileName=`echo "$fileName" | sed s/.java//`
+    fileName=`echo "$fileName" | sed s/.java$//`
 fi
 
 mkdir -p "$folderName"
