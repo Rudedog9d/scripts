@@ -6,20 +6,20 @@
 #
 import http.client
 from urllib import parse, request, error
-from json import JSONDecodeError, loads
+from json import loads
 
 # Change query here if running this script directly
 # Should change to accepting CLI args
 SEARCH = {
-    'search_term': "Amazing Desktop Backgrounds",  # Terms to search Bing search engine for
-    'count': 1,      # Number of pics to return from search
-    'offset': 50,      # Number of search results to skip before returning results
+    'search_term': "Cat Desktop Backgrounds",  # Terms to search Bing search engine for
+    'count': 50,      # Number of pics to return from search
+    'offset': 0,      # Number of search results to skip before returning results
     'min_width': 0,   # Minimum width  of pic, in pixels
     'min_height': 0,  # Minimum height of pic, in pixels
     'safe_search': 'Moderate',  # Strict, Moderate, Off
     'subscription_key': ''  # Subscription key for Bing API
 }
-TARGET_DIR = '.'  # Directory to save images to. Can be relative or absolute, no trailing slash, ex. /tmp/images
+TARGET_DIR = ''  # Optional directory to save images to. Relative or absolute, no trailing slash, ex. /tmp/images
 SPACE_CHAR = '_'       # Choose what to replace spaces in the filename with. Make this a space to not replace them
 VERBOSITY = 'warn'     # Can be 'Error', 'Warn', or 'Info' (In order of increasing Verbosity)
 
@@ -75,19 +75,12 @@ def search_bing_images(query, subscription_key, count=35, offset=0, mkt='en-US',
         'safeSearch': safe_search
     })
 
-    try:
-        conn = http.client.HTTPSConnection('api.cognitive.microsoft.com')
-        conn.request("POST", "/bing/v5.0/images/search?%s" % params, "{body}", headers)
-        response = conn.getresponse()
-        data = response.read()
-        conn.close()
-        pydata = loads(data.decode())  # parse the JSON with json.loads
-    except JSONDecodeError as e:
-        print("Couldn't parse JSON\n{}".format(e))  # Should these be caught or passed up? I'm on the fence...
-        return None
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
-        return None
+    conn = http.client.HTTPSConnection('api.cognitive.microsoft.com')
+    conn.request("POST", "/bing/v5.0/images/search?%s" % params, "{body}", headers)
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    pydata = loads(data.decode())  # parse the JSON with json.loads
     return pydata
 
 def normalize(s):
@@ -109,14 +102,15 @@ def download_image(url, name, file_format, target_directory=None):
     file_format = 'jpg' if file_format == 'jpeg' else file_format
     try:
         if target_directory:  # save to a target directory if defined
+            from os import path
+            if not path.isdir(target_directory):  # Check of target dir exists first
+                raise FileNotFoundError('Target directory not found: "{}"'.format(target_directory))
             request.urlretrieve(url, "{dir}/{name}.{format}".format(dir=target_directory,
                                                                     name=name, format=file_format))
         else:
             request.urlretrieve(url, "{name}.{format}".format(name=name, format=file_format))
     except error.HTTPError:
         print('Permission Denied! Continuing...')
-    except Exception as e:
-        print("Something went wrong: {}\nContinuing...".format(e))
 
 
 if __name__ == "__main__":
