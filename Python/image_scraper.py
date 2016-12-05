@@ -156,36 +156,3 @@ if __name__ == "__main__":
         download_image(url=img_url, name=img_name, file_format=img_format, target_directory=TARGET_DIR)
 
     print("Received {} results from an estimated {}".format(len(results), search_data['totalEstimatedMatches']))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
