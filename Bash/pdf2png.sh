@@ -9,7 +9,9 @@
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-for file in `ls *pdf` # for each pdf in directory
+Files="*.pdf"
+
+for file in `ls "$Files"` # for each pdf in directory
 do
 
   pdf="$file"
