@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Source colors.sh if it exists
+. colors.sh 2> /dev/null
+
 function search(){
   # Brodie Davis
   # May 2017
@@ -10,9 +13,9 @@ function search(){
   #           Searches all files (and files in subdirs) ENDING IN 'html' for lines containing the word 'json'
   #
   function print_usage(){
-    echo "USAGE: search SEARCH_TERM [-f file_pattern] [-x file_pattern [-x ...]]"
+    echo "USAGE: search SEARCH_TERM [-f file_pattern] [-e file_pattern [-e ...]]"
     echo "     -f|--filename) File pattern to match, regex supported."
-    echo "     -x|--exclude)  File pattern to exclude, regex supported."
+    echo "     -e|--exclude)  File pattern to exclude, regex supported."
     echo
     echo "Ex. search json -f '*html'"
     echo "Ex. search json -f '*html' -x bower_components -x '*.js'"
@@ -48,7 +51,7 @@ function search(){
           keyword="$1"
           i=`expr $i + 1`
         else
-          echo -ne "Unknown Paramter: $1"
+          echo -ne "$Red Unknown Paramter: $1\n$RESET" # Colors are hopefully sourced from colors.sh
         fi
        ;;
     esac
